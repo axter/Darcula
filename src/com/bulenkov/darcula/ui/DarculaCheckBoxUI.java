@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2000-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.bulenkov.iconloader.util.EmptyIcon;
 import com.bulenkov.iconloader.util.GraphicsConfig;
 import com.bulenkov.iconloader.util.Gray;
 import com.bulenkov.iconloader.util.UIUtil;
+import com.intellij.util.ui.JBUI;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
@@ -63,7 +64,7 @@ public class DarculaCheckBoxUI extends MetalCheckBoxUI {
     viewRect.width -= (i.right + viewRect.x);
     viewRect.height -= (i.bottom + viewRect.y);
 
-    String text = SwingUtilities.layoutCompoundLabel(c, fm, b.getText(), getDefaultIcon(),
+    String text = SwingUtilities.layoutCompoundLabel(c, fm, b.getText(), getDefaultIcon(font.getSize()),
                                                      b.getVerticalAlignment(), b.getHorizontalAlignment(),
                                                      b.getVerticalTextPosition(), b.getHorizontalTextPosition(),
                                                      viewRect, iconRect, textRect, b.getIconTextGap());
@@ -114,14 +115,15 @@ public class DarculaCheckBoxUI extends MetalCheckBoxUI {
       }
 
       if (b.getModel().isSelected()) {
-        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        g.setStroke(new BasicStroke(1 *2.0f, BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-        g.setPaint(getShadowColor(b.isEnabled()));
-        g.drawLine(4, 7, 7, 11);
-        g.drawLine(7, 11, w, 2);
-        g.setPaint(getCheckSignColor(b.isEnabled()));
-        g.drawLine(4, 5, 7, 9);
-        g.drawLine(7, 9, w, 0);
+        drawCheckedIcon(g, b, w, getCheckBoxSize(font.getSize()));
+//        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+//        g.setStroke(new BasicStroke(1 *2.0f, BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+//        g.setPaint(getShadowColor(b.isEnabled()));
+//        g.drawLine(4, 7, 7, 11);
+//        g.drawLine(7, 11, w, 2);
+//        g.setPaint(getCheckSignColor(b.isEnabled()));
+//        g.drawLine(4, 5, 7, 9);
+//        g.drawLine(7, 9, w, 0);
       }
       g.translate(-x, -y);
       config.restore();
@@ -191,6 +193,32 @@ public class DarculaCheckBoxUI extends MetalCheckBoxUI {
 
   @Override
   public Icon getDefaultIcon() {
-    return new IconUIResource(EmptyIcon.create(20));
+    return new IconUIResource(EmptyIcon.create(JBUI.scale(20)));
+  }
+
+  public static Icon getDefaultIcon(int fontSize) {
+    return new IconUIResource(EmptyIcon.create(getCheckBoxSize(fontSize)));
+  }
+
+  public static int getCheckBoxSize(int fontSize){
+    int size1 = JBUI.scale(20);
+    return size1 > fontSize ? size1 : fontSize;
+  }
+
+  private static final float[] checkedIconScale = {
+          // 4,7,11,w,2
+//          0.2f, 0.35f, 0.55f, 0.1f,
+          // 6,10.5,16.5,w,3
+          0.24f, 0.42f, 0.64f, 0.12f,
+  };
+  private void drawCheckedIcon(Graphics2D g,JCheckBox b,int w,int boxSize){
+    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+    g.setStroke(new BasicStroke(boxSize/10.0f, BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+    g.setPaint(getShadowColor(b.isEnabled()));
+    g.drawLine((int) (checkedIconScale[0] * boxSize), (int) (checkedIconScale[1] * boxSize), (int) (checkedIconScale[1] * boxSize), (int) (checkedIconScale[2] * boxSize));
+    g.drawLine((int) (checkedIconScale[1] * boxSize), (int) (checkedIconScale[2] * boxSize), w, (int) (checkedIconScale[3] * boxSize));
+    g.setPaint(getCheckSignColor(b.isEnabled()));
+    g.drawLine((int) (checkedIconScale[0] * boxSize), (int) (checkedIconScale[1] * boxSize - 2), (int) (checkedIconScale[1] * boxSize), (int) (checkedIconScale[2] * boxSize) - 2);
+    g.drawLine((int) (checkedIconScale[1] * boxSize), (int) (checkedIconScale[2] * boxSize - 2), w, (int) (checkedIconScale[3] * boxSize) - 2);
   }
 }

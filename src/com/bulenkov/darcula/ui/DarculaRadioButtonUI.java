@@ -17,6 +17,7 @@ package com.bulenkov.darcula.ui;
 
 import com.bulenkov.darcula.DarculaUIUtil;
 import com.bulenkov.iconloader.util.*;
+import com.intellij.util.ui.JBUI;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
@@ -59,7 +60,7 @@ public class DarculaRadioButtonUI extends MetalRadioButtonUI {
 
 
     String text = SwingUtilities.layoutCompoundLabel(
-      c, fm, b.getText(), getDefaultIcon(),
+      c, fm, b.getText(), DarculaCheckBoxUI.getDefaultIcon(f.getSize()),
       b.getVerticalAlignment(), b.getHorizontalAlignment(),
       b.getVerticalTextPosition(), b.getHorizontalTextPosition(),
       viewRect, iconRect, textRect, b.getIconTextGap());
@@ -70,7 +71,7 @@ public class DarculaRadioButtonUI extends MetalRadioButtonUI {
       g.fillRect(0,0, size.width, size.height);
     }
 
-    int rad = 5;
+    int rad = getRadioButtonSelectedSize(f.getSize());
 
     // Paint the radio button
     final int x = iconRect.x + (rad-1)/2;
@@ -113,9 +114,10 @@ public class DarculaRadioButtonUI extends MetalRadioButtonUI {
     if (b.isSelected()) {
       final boolean enabled = b.isEnabled();
       g.setColor(UIManager.getColor(enabled ? "RadioButton.darcula.selectionEnabledShadowColor" : "RadioButton.darcula.selectionDisabledShadowColor"));// ? Gray._30 : Gray._60);
-      g.fillOval(w/2 - rad/2, h/2 , rad, rad);
+      final int yOff = 1 + JBUI.scale(1);
+      g.fillOval(w/2 - rad/2, h/2 - rad/2 + yOff, rad, rad);
       g.setColor(UIManager.getColor(enabled ? "RadioButton.darcula.selectionEnabledColor" : "RadioButton.darcula.selectionDisabledColor")); //Gray._170 : Gray._120);
-      g.fillOval(w/2 - rad/2, h/2 - 1, rad, rad);
+      g.fillOval(w/2 - rad/2, h/2 - rad/2 - 1 + yOff, rad, rad);
     }
     config.restore();
     g.translate(-x, -y);
@@ -142,6 +144,10 @@ public class DarculaRadioButtonUI extends MetalRadioButtonUI {
 
   @Override
   public Icon getDefaultIcon() {
-    return new IconUIResource(EmptyIcon.create(20));
+    return new IconUIResource(EmptyIcon.create(JBUI.scale(20)));
+  }
+
+  public static int getRadioButtonSelectedSize(int fontSize){
+    return JBUI.scale((int) (0.25 * (22 > fontSize ? 22 : fontSize)));
   }
 }

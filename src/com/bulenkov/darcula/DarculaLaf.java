@@ -108,6 +108,7 @@ public final class DarculaLaf extends BasicLookAndFeel {
         defaults.put("MenuBarUI", "com.bulenkov.darcula.ui.DarculaMenuBarUI");
         defaults.put("MenuUI", "javax.swing.plaf.basic.BasicMenuUI");
       }
+      addFileChooserIcon(defaults);
       return defaults;
     }
     catch (Exception ignore) {
@@ -399,5 +400,21 @@ public final class DarculaLaf extends BasicLookAndFeel {
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK | InputEvent.CTRL_DOWN_MASK), copyActionKey);
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.CTRL_DOWN_MASK), pasteActionKey);
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.CTRL_DOWN_MASK), DefaultEditorKit.cutAction);
+  }
+
+  private static void addFileChooserIcon(UIDefaults defaults){
+      defaults.put("FileView.directoryIcon", new IconUIResource(IconLoader.getIcon("/nodes/folder.png")));
+      defaults.put("FileView.fileIcon", new IconUIResource(IconLoader.getIcon("/nodes/unknown.png")));
+      defaults.put("FileView.hardDriveIcon", new IconUIResource(IconLoader.getIcon("/nodes/TreeOpen.png")));
+//      defaults.put("FileView.computerIcon", AllIcons.Nodes.TreeOpen);
+//      defaults.put("FileView.floppyDriveIcon", AllIcons.Nodes.TreeOpen);
+
+    defaults.put("FileChooser.upFolderIcon", new IconUIResource(IconLoader.getIcon("/nodes/upFolder.png")));
+    defaults.put("FileChooser.newFolderIcon", new IconUIResource(IconLoader.getIcon("/nodes/newFolder.png")));
+    defaults.put("FileChooser.homeFolderIcon", new IconUIResource(IconLoader.getIcon("/nodes/homeFolder.png")));
+
+    defaults.put("FileChooser.listViewIcon", new IconUIResource(IconLoader.getIcon("/nodes/list.png")));// 列表
+    defaults.put("FileChooser.detailsViewIcon", new IconUIResource(IconLoader.getIcon("/nodes/value.png")));// 详情
+//    defaults.put("FileChooser.viewMenuIcon", AllIcons.Nodes.Advice);
   }
 }
